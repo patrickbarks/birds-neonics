@@ -27,39 +27,36 @@ File #2 can be produced using `r/build-epest.R`. Folder #3 can be downloaded [he
 
 #### North American Breeding Bird Survey (BBS) (2015 version)
 [ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/Archivefiles/Version2015v1/](ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/Archivefiles/Version2015v1/)
-`bbs_raw_2015/States/`
-`bbs_raw_2015/BCR.csv`
-`bbs_raw_2015/RegionCodes.csv`
-`bbs_raw_2015/routes.csv` (within Routes.zip)
-`bbs_raw_2015/weather.csv` (within Weather.zip)
+- `bbs_raw_2015/States/`
+- `bbs_raw_2015/BCR.csv`
+- `bbs_raw_2015/RegionCodes.csv`
+- `bbs_raw_2015/routes.csv` (within Routes.zip)
+- `bbs_raw_2015/weather.csv` (within Weather.zip)
 
-[https://www.pwrc.usgs.gov/bbs/stratanames/index.html](https://www.pwrc.usgs.gov/bbs/stratanames/index.html)
-`bbs_raw_2015/bbs_stata_info.csv` (csv file derived manually from info on webpage)
+Others:
+- [`bbs_raw_2015/bbs_stata_info.csv`](https://www.pwrc.usgs.gov/bbs/stratanames/index.html) (csv file derived manually from info on webpage)
 
 [https://www.mbr-pwrc.usgs.gov/bbs/geographic_information/geographic_information_products_.htm](https://www.mbr-pwrc.usgs.gov/bbs/geographic_information/geographic_information_products_.htm)
-`bbs_raw_2015/bbsrte_2012_alb/` (note: apparently no longer available)
+- `bbs_raw_2015/bbsrte_2012_alb/` (note: apparently no longer available)
 
 [https://www.pwrc.usgs.gov/bba/index.cfm?fa=bba.getData](https://www.pwrc.usgs.gov/bba/index.cfm?fa=bba.getData)
-`bbs_raw_2015/bcr_shp/` (within bcr_shp.zip)
+- `bbs_raw_2015/bcr_shp/` (within bcr_shp.zip)
 
 #### USGS EPest-High Data Series
-[https://pubs.usgs.gov/ds/752/](https://pubs.usgs.gov/ds/752/)
-`epest_raw/1992_2009/` (see 14 text files on right side of page)
-
-[https://pubs.usgs.gov/ds/0907/](https://pubs.usgs.gov/ds/0907/)
-`epest_raw/2008_2012/` (see 14 text files on right side of page)
+- [`epest_raw/1992_2009/`](https://pubs.usgs.gov/ds/752/) (see 14 text files on right side of page)
+- [`epest_raw/2008_2012/`](https://pubs.usgs.gov/ds/0907/) (see 14 text files on right side of page)
 
 #### National Land Cover Database (2011)
 [https://www.mrlc.gov/nlcd11_data.php](https://www.mrlc.gov/nlcd11_data.php)
-`nlcd_2011_landcover_2011_edition_2014_10_10/`
+- `nlcd_2011_landcover_2011_edition_2014_10_10/`
 
 #### American Counties Shapefile
 [https://www.census.gov/geo/maps-data/data/cbf/cbf_counties.html](https://www.census.gov/geo/maps-data/data/cbf/cbf_counties.html)
-`gz_2010_us_050_00_500k/` (path `2010 Census` > gz_2010_us_050_00_500k.zip)
+- `gz_2010_us_050_00_500k/` (path `2010 Census` > gz_2010_us_050_00_500k.zip)
 
 #### Dutch Neonicotinoid Use Estimates from StatLine
 [http://statline.cbs.nl/statweb](http://statline.cbs.nl/statweb)
-`neonic-use-netherlands.csv` (csv derived manually via path: `Theme` > `Agriculture` > `Pesticides` > `Crop protection; active ingredient` > `Amount of use` > `Use per year` > [select compounds and periods of interest])
+- `neonic-use-netherlands.csv` (csv derived manually via path: `Theme` > `Agriculture` > `Pesticides` > `Crop protection; active ingredient` > `Amount of use` > `Use per year` > [select compounds and periods of interest])
 
 
 ## Summary of R scripts (`r/`)
@@ -70,9 +67,9 @@ File #2 can be produced using `r/build-epest.R`. Folder #3 can be downloaded [he
 
 **build-epest.R** Arrange the various EPEST data tables into a single data frame (saved as `data/epest-merge.csv`). Also produces data frames for total neonicotinoid use in each county and year scaled by county area (`data/neonic-county-year.csv`), average annual neonicotinoid use in each county over the period 2005-2012 scaled by county area (`data/neonic-county-mean-2005-2012.csv`), and average annual imidacloprid use in each county over the period 2005-2012 scaled by county area (`data/imidacloprid-county-mean-2005-2012.csv`).
 
-**model-spp-[TYPE].R** Fits species-level models using RStan library, and saves resulting stanfit objects to the folder `stanfit/`. These scripts were run on Amazon Web Service EC2 instances (type c4.xlarge). For a given model type and time period, the run-time for the full list of 28 species on a single instance was on the order of 72 hours.
+**model-spp-[TYPE].R** Fits species-level models using the RStan library, and saves resulting stanfit objects to the folder `stanfit/`. These scripts were run on Amazon Web Service EC2 instances (type c4.xlarge). For a given model type and time period, the run-time for the full list of 28 species on a single instance was on the order of 72 hours.
 
-**get-post-summary-[TYPE].R** Extracts model diagnostics and posterior samples for parameters of interest, from each of the species-level models (i.e. from the stanfit objects in the folder `stanfit/`). Resulting summaries are save as `analysis/post-summary-spp-[TYPE].csv`.
+**get-post-summary-[TYPE].R** Extracts model diagnostics and posterior samples for parameters of interest, from each of the species-level models (i.e. from the stanfit objects in the folder `stanfit/`). Resulting summaries are saved as `analysis/post-summary-spp-[TYPE].csv`.
 
 **model-aggregate.R** Fits aggregation models (i.e. models to aggregate parameters of interest across species and regions) using RStan, and saves resulting summaries as `analysis/post-summary-agg-[TYPE].RData`.
 
