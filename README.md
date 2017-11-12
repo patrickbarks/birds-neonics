@@ -26,37 +26,30 @@ File #2 can be produced using `r/build-epest.R`. Folder #3 can be downloaded [he
 ## Sources for raw data (`data/`)
 
 #### North American Breeding Bird Survey (BBS) (2015 version)
-[ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/Archivefiles/Version2015v1/](ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/Archivefiles/Version2015v1/)
+[BBS data from USGS ftp server:](ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/Archivefiles/Version2015v1/)
 - `bbs_raw_2015/States/`
 - `bbs_raw_2015/BCR.csv`
 - `bbs_raw_2015/RegionCodes.csv`
 - `bbs_raw_2015/routes.csv` (within Routes.zip)
 - `bbs_raw_2015/weather.csv` (within Weather.zip)
 
-Others:
+[BBS data obtained elsewhere:]
 - [`bbs_raw_2015/bbs_stata_info.csv`](https://www.pwrc.usgs.gov/bbs/stratanames/index.html) (csv file derived manually from info on webpage)
-
-[https://www.mbr-pwrc.usgs.gov/bbs/geographic_information/geographic_information_products_.htm](https://www.mbr-pwrc.usgs.gov/bbs/geographic_information/geographic_information_products_.htm)
-- `bbs_raw_2015/bbsrte_2012_alb/` (note: apparently no longer available)
-
-[https://www.pwrc.usgs.gov/bba/index.cfm?fa=bba.getData](https://www.pwrc.usgs.gov/bba/index.cfm?fa=bba.getData)
-- `bbs_raw_2015/bcr_shp/` (within bcr_shp.zip)
+- [`bbs_raw_2015/bbsrte_2012_alb/`](https://www.mbr-pwrc.usgs.gov/bbs/geographic_information/geographic_information_products_.htm) (note: apparently no longer available)
+- [`bbs_raw_2015/bcr_shp/`](https://www.pwrc.usgs.gov/bba/index.cfm?fa=bba.getData) (within bcr_shp.zip)
 
 #### USGS EPest-High Data Series
 - [`epest_raw/1992_2009/`](https://pubs.usgs.gov/ds/752/) (see 14 text files on right side of page)
 - [`epest_raw/2008_2012/`](https://pubs.usgs.gov/ds/0907/) (see 14 text files on right side of page)
 
 #### National Land Cover Database (2011)
-[https://www.mrlc.gov/nlcd11_data.php](https://www.mrlc.gov/nlcd11_data.php)
-- `nlcd_2011_landcover_2011_edition_2014_10_10/`
+- [`nlcd_2011_landcover_2011_edition_2014_10_10/`](https://www.mrlc.gov/nlcd11_data.php)
 
 #### American Counties Shapefile
-[https://www.census.gov/geo/maps-data/data/cbf/cbf_counties.html](https://www.census.gov/geo/maps-data/data/cbf/cbf_counties.html)
-- `gz_2010_us_050_00_500k/` (path `2010 Census` > gz_2010_us_050_00_500k.zip)
+- [`gz_2010_us_050_00_500k/`](https://www.census.gov/geo/maps-data/data/cbf/cbf_counties.html) (path `2010 Census` > gz_2010_us_050_00_500k.zip)
 
 #### Dutch Neonicotinoid Use Estimates from StatLine
-[http://statline.cbs.nl/statweb](http://statline.cbs.nl/statweb)
-- `neonic-use-netherlands.csv` (csv derived manually via path: `Theme` > `Agriculture` > `Pesticides` > `Crop protection; active ingredient` > `Amount of use` > `Use per year` > [select compounds and periods of interest])
+- [`neonic-use-netherlands.csv`](http://statline.cbs.nl/statweb) (csv derived manually via path: `Theme` > `Agriculture` > `Pesticides` > `Crop protection; active ingredient` > `Amount of use` > `Use per year` > [select compounds and periods of interest])
 
 
 ## Summary of R scripts (`r/`)
