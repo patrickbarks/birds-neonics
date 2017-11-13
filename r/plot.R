@@ -886,7 +886,7 @@ neonic_county_year %>%
 
 # create figure
 fig_s9 <- ggplot(neonic_full, aes(year, neonic_scaled, col = country)) +
-  geom_line(inherit.aes = F, data = neonic_county_year, aes(year, neonics, group = fips, linetype = type), alpha = 0.05) +
+  geom_line(inherit.aes = F, data = neonic_county_year, aes(year, neonics, group = fips, linetype = type), alpha = 0.1) +
   geom_point(size = 2.5) +
   geom_line(size = 1.5) +
   coord_cartesian(ylim = c(0, 3)) +
@@ -910,6 +910,71 @@ quartz(height = 4.5, width = 5.5)
 print(fig_s9)
 
 # write to file
-ggsave('figures/fig-s9.png', p1, height = 4.5, width = 5.5, units = 'in')
+ggsave('figures/fig-s9.png', fig_s9, height = 4.5, width = 5.5, units = 'in')
+
+
+
+
+
+################### Fig A5
+# correlation between posterior median neonic effects estimated in main analysis
+# versus effects estimated using spatial mismatch model
+
+# load relevant data
+load('analysis/post-summary-agg-spatial-neonic-mismatch.RData')  # summary_agg_neonic_mismatch
+load('analysis/post-summary-agg-spatial-neonic.RData')           # summary_agg_neonic
+
+# organize data
+df_mismatch_spp <- summary_agg_neonic_mismatch$df_spp[[1]] %>% mutate(type = 'Mismatch')
+df_mismatch_bcr <- summary_agg_neonic_mismatch$df_bcr[[1]] %>% mutate(type = 'Mismatch')
+
+df_neonic_spp <- summary_agg_neonic$df_spp[[7]] %>% mutate(type = 'Original')
+df_neonic_bcr <- summary_agg_neonic$df_bcr[[7]] %>% mutate(type = 'Original')
+
+df_spp_full <- rbind.data.frame(df_mismatch_spp, df_neonic_spp) %>% 
+  dplyr::select(aou, type, theta_med) %>% 
+  spread(type, theta_med)
+
+df_bcr_full <- rbind.data.frame(df_mismatch_bcr, df_neonic_bcr) %>% 
+  dplyr::select(bcr, type, theta_med) %>% 
+  spread(type, theta_med)
+
+# ggplot theme
+tt <- theme_bw() +
+  theme(panel.grid = element_blank(),
+        text = element_text(size = 14),
+        axis.title = element_text(size = 15),
+        plot.title = element_text(size = 15),
+        axis.ticks = element_line(size = 0.3),
+        axis.title.x = element_text(margin = margin(.3, 0, 0, 0, unit = 'cm')),
+        axis.title.y = element_text(margin = margin(0, .3, 0, 0, unit = 'cm')))
+
+# left panel (by species)
+p1 <- ggplot(df_spp_full, aes(Original, Mismatch)) +
+  geom_point(size = 2) +
+  scale_y_continuous(breaks = seq(-0.4, 0.4, 0.2)) +
+  xlab('Median neonic. effect (initial analysis)') +
+  ylab('Median neonic. effect (amalgamated counties)') +
+  ggtitle('By species') +
+  tt
+
+# right panel (by BCR)
+p2 <- ggplot(df_bcr_full, aes(Original, Mismatch)) +
+  geom_point(size = 2) +
+  xlab('Median neonic. effect (initial analysis)') +
+  ylab(NULL) +
+  ggtitle('By BCR') +
+  tt
+
+# full plot
+p_full <- arrangeGrob(p1, p2, nrow = 1, widths = c(1.08, 1))
+
+# check figure
+dev.off()
+quartz(height = 6, width = 10)
+grid.arrange(p_full)
+
+# write to file
+ggsave('figures/appendix-regular-vs-amalgam-counties.png', p_full, height = 6, width = 10, units = 'in')
 
 
