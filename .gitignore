@@ -5,3 +5,4 @@ data/bbs-allstates-2015.txt
 data/epest-merge.csv
 data/nlcd_2011_landcover_2011_edition_2014_10_10/**
 stanfit/**
+*.zip
