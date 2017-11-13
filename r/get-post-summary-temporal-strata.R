@@ -9,7 +9,7 @@ library(rstan)
 
 
 # setwd
-setwd('~/desktop/bbs/')
+setwd('~/birds-neonics/')
 
 
 # read species of interest

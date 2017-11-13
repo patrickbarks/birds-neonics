@@ -5,7 +5,7 @@ library(dplyr)
 library(readr)
 
 # setwd
-setwd('~/desktop/bbs')
+setwd('~/birds-neonics/')
 
 # bbs_allstates-2015.txt can be obtained with the following shell commands on Mac OSX:
 # cd data/bbs_raw_2015/States/
@@ -17,7 +17,6 @@ setwd('~/desktop/bbs')
 # head -1 Alabama.csv > ../../bbs-allstates-2015.txt
 # tail -n +2 -q *.csv >> ../../bbs-allstates-2015.txt
 
-
 # read data
 dt <- read_csv('data/bbs-allstates-2015.txt')        # BBS bird counts
 wx <- read.csv('data/bbs_raw_2015/weather.csv')      # BBS weather info
@@ -25,12 +24,10 @@ rt <- read_csv('data/bbs_raw_2015/routes.csv')       # BBS route info
 rg <- read_csv('data/bbs_raw_2015/RegionCodes.csv')  # BBS region info
 species <- read_csv('data/species-list.csv')         # Barks and Galpern species list
 
-
 # remove extraneous columns
 dt <- select(dt, -matches('count[[:digit:]]+'), -StopTotal, count = SpeciesTotal)
 wx <- select(wx, countrynum, statenum, Route, RPID, Year, observer = ObsN, RunType)
 rt <- select(rt, countrynum, statenum, Route, Stratum, BCR)
-
 
 # format state, route, and region IDs (to ensure consistency in # of digits)
 wx$statenum <- formatC(wx$statenum, width = 2, flag = "0")
@@ -38,7 +35,6 @@ wx$Route <- formatC(wx$Route, width = 3, flag = "0")
 rt$statenum <- formatC(rt$statenum, width = 2, flag = "0")
 rt$Route <- formatC(rt$Route, width = 3, flag = "0")
 rg$RegionCode <- formatC(rg$RegionCode, width = 2, flag = "0")
-
 
 # limit to contiguous USA (exclude Alaska, statenum == 03)
 dt <- filter(dt, countrynum == 840, statenum != "03")
@@ -49,24 +45,19 @@ dt$route_uniq <- with(dt, paste0("C", countrynum, "S", statenum, "R", Route))
 wx$route_uniq <- with(wx, paste0("C", countrynum, "S", statenum, "R", Route))
 rt$route_uniq <- with(rt, paste0("C", countrynum, "S", statenum, "R", Route))
 
-
 # create unique route-year identifiers (paste route-year)
 dt$route_yr <- with(dt, paste0(route_uniq, "YR", Year))
 wx$route_yr <- with(wx, paste0(route_uniq, "YR", Year))
-
 
 # create unique route-year-rpid identifiers (RPID indicates whether survey is within-year replicate)
 dt$route_yr_rpid <- with(dt, paste0(route_yr, "RPID", RPID))
 wx$route_yr_rpid <- with(wx, paste0(route_yr, "RPID", RPID))
 
-
 # create unique observer-route identifier
 wx$obs_route <- with(wx, paste0(observer, route_uniq))
 
-
 # join region df to route df
 rt_rg <- left_join(rt, rg, by = c('countrynum', 'statenum' = 'RegionCode'))
-
 
 # create observer firstyr var in wx (1 == firstyr, 0 == not-firstyr)
 wx <- wx %>% 
@@ -74,14 +65,11 @@ wx <- wx %>%
   mutate(firstyr = ifelse(Year == min(Year), 1, 0)) %>% 
   ungroup()
 
-
 # check that number of first-year runs is sensible
 table(wx$firstyr) 
 
-
 # join weather df to route-region df
 wx_rt <- left_join(wx, select(rt_rg, route_uniq, state_prov, Stratum, BCR), by = 'route_uniq')
-
 
 # put together the full dataset (excluding counts of zero)
 bbs_full_nozeros <- left_join(select(dt, route_yr_rpid, Aou, count), wx_rt, by = 'route_yr_rpid') %>%
@@ -91,29 +79,25 @@ bbs_full_nozeros <- left_join(select(dt, route_yr_rpid, Aou, count), wx_rt, by =
   filter(runtype == 1) %>%          # remove rows with runtype == 0 (BBS category for unacceptable data quality)
   arrange(aou, route_uniq, year)    # arrange rows by route then year
 
-
 # write to file
 save(bbs_full_nozeros, file = 'data/bbs-full-nozeros.RData')
 
 
 
-### Filter to species of interest, and add in species counts of zero
+##### Filter to species of interest, and add in species counts of zero
 # filter dt to species of interest, and remove unnecessary columns
 dt_subset <- filter(dt, Aou %in% species$aou) %>% 
   select(route_yr_rpid, Aou, count)
-
 
 # filter weather-route df to RunType == 1 (remove runs with unacceptable data quality),
 #  and remove unnecessary columns
 wx_rt_sub <- filter(wx_rt, RunType == 1) %>% 
   select(route_yr_rpid, route_uniq, Year, route_yr, observer, obs_route, firstyr, state_prov, Stratum, BCR)
 
-
 # generate all combinations of species and route-year-rpid, where RunType == 1
 all_rows <- expand.grid(route_yr_rpid = wx_rt_sub$route_yr_rpid,
                         Aou = species$aou,
                         stringsAsFactors = F)
-
 
 # put together the full dataset for species of interest, including counts of zero
 bbs_use <- all_rows %>% 
@@ -125,7 +109,6 @@ bbs_use <- all_rows %>%
   select(aou, route_uniq, year, rpid, observer, firstyr, obs_route,
          runtype, count, state_prov, stratum, bcr) %>%   # rearrange columns
   arrange(aou, route_uniq, year)      # arrange rows by route then year
-
   
 # write to file
 save(bbs_use, file = 'data/bbs-use.RData')

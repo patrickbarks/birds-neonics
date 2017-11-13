@@ -14,7 +14,7 @@ options(mc.cores = parallel::detectCores())
 
 
 # setwd
-setwd('~/desktop/bbs/')
+setwd('~/birds-neonics/')
 
 
 # read species and bcr data

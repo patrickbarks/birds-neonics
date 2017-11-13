@@ -1,17 +1,14 @@
 #!/usr/bin/Rscript
 
-
 # load libraries
 require(rstan)
 require(dplyr)
 require(readr)
 require(docopt)
 
-
 # set rstan options
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
-
 
 # docopt options
 opts <- docopt('
@@ -24,26 +21,21 @@ opts <- docopt('
   -s Which portion of spp list to run [default: full]
 ')
 
-
-# set options specific to macbook...
+# set options specific to my macbook...
 if(any(grep('Darwin', Sys.info()))) {
-  setwd('~/desktop/bbs/')
+  setwd('~/birds-neonics/')
   opts$c <- '2'
 }
-
 
 # load bbs data
 load('data/bbs-use.RData')
 
-
 # read species of interest
 species_df <- read_csv('data/species-list.csv')
-
 
 # read neonic data
 neonics_counties <- read_csv('data/neonic-county-mean-2005-2012.csv') %>% 
   mutate(neonic_cubert = neonic_mean^(1/3)) %>% dplyr::select(-neonic_mean)
-
 
 # merge county and neonic data
 route_counties <- read_csv('data/route-county-full.csv') %>% 
@@ -57,10 +49,8 @@ neonics_counties_merge <- route_counties %>%
   group_by(fips_merge) %>% 
   summarize(neonic_cubert = unique(neonic_cubert))
 
-
 # params
 if (opts$y == '2005') years_focal <- 2005:2014
-
 
 
 # which portion of species list to run?
@@ -72,7 +62,7 @@ if (opts$s == 'half1') indices <- indices[indices_cuts2 == levels(indices_cuts2)
 if (opts$s == 'half2') indices <- indices[indices_cuts2 == levels(indices_cuts2)[2]]  # second half
 
 
-# for each species...
+## for each species...
 for (i in indices) {
 
   # get species aou
@@ -173,6 +163,5 @@ for (i in indices) {
     save(fit, file = file_out_redo)
     rm(fit)
   }
-
 }
 

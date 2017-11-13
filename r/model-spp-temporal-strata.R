@@ -1,17 +1,14 @@
 #!/usr/bin/Rscript
 
-
 # load libraries
 require(rstan)
 require(dplyr)
 require(readr)
 require(docopt)
 
-
 # set rstan options
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
-
 
 # docopt
 opts <- docopt('
@@ -23,10 +20,9 @@ opts <- docopt('
     -s Which portion of spp list to run [default: full]
 ')
 
-
-# set options specific to macbook
+# set options specific to my macbook...
 if(any(grep('Darwin', Sys.info()))) {
-  setwd('~/desktop/bbs/')
+  setwd('~/birds-neonics/')
   opts$c <- '2'
 }
 
@@ -34,15 +30,12 @@ if(any(grep('Darwin', Sys.info()))) {
 # load bbs data
 load('data/bbs-use.RData')
 
-
 # read species list
 species_df <- read_csv('data/species-list.csv')
-
 
 # read strata info
 strat_info <- read_csv('data/bbs_raw_2015/bbs_strata_info.csv') %>% 
   dplyr::select(stratum = strat_no, strat_area)
-
 
 # which portion of species list to run?
 indices <- 1:nrow(species_df)
@@ -52,12 +45,11 @@ if (opts$s == 'full') indices <- indices  # full list
 if (opts$s == 'half1') indices <- indices[indices_cuts2 == levels(indices_cuts2)[1]]  # first half
 if (opts$s == 'half2') indices <- indices[indices_cuts2 == levels(indices_cuts2)[2]]  # second half
 
-
 # focal year range
 years_focal <- 1985:2014
 
 
-# for each species...
+## for each species...
 for (i in indices) {
   
   # get aou
@@ -147,5 +139,4 @@ for (i in indices) {
 # ################### Diagnostics
 # library(shinystan)
 # launch_shinystan(fit)
-
 

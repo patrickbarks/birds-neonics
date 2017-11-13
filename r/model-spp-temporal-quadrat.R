@@ -1,17 +1,14 @@
 #!/usr/bin/Rscript
 
-
 # load libraries
 require(rstan)
 require(dplyr)
 require(readr)
 require(docopt)
 
-
 # set rstan options
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
-
 
 # docopt
 opts <- docopt('
@@ -23,23 +20,19 @@ opts <- docopt('
     -s Which portion of spp list to run [default: full]
 ')
 
-
-# set options specific to macbook...
+# set options specific to my macbook...
 if(any(grep('Darwin', Sys.info()))) {
-  setwd('~/desktop/bbs/')
+  setwd('~/birds-neonics/')
   opts$c <- '2'
 }
-
 
 # load relevant data
 load('data/bbs-use.RData')
 species_df <- read_csv('data/species-list.csv')
 route_quads <- read_csv('data/route-quadrat.csv')
 
-
 # focal year range
 years_focal <- 2005:2014
-
 
 # which portion of species list to run?
 indices <- 1:nrow(species_df)
@@ -50,7 +43,7 @@ if (opts$s == 'half1') indices <- indices[indices_cuts2 == levels(indices_cuts2)
 if (opts$s == 'half2') indices <- indices[indices_cuts2 == levels(indices_cuts2)[2]]  # second half
 
 
-# for each species...
+## for each species...
 for (i in indices) {
   
   # get aou
@@ -105,5 +98,4 @@ for (i in indices) {
   save(fit, file = file_out)
   rm(fit)
 }
-
 

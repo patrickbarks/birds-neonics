@@ -13,7 +13,7 @@ library(gridExtra)
 
 
 # setwd
-setwd('~/desktop/bbs/')
+setwd('~/birds-neonics/')
 
 
 # read species list and epest data

@@ -1,17 +1,14 @@
 #!/usr/bin/Rscript
 
-
 # load libraries
 require(rstan)
 require(dplyr)
 require(readr)
 require(docopt)
 
-
 # set rstan options
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
-
 
 # docopt
 opts <- docopt('
@@ -24,35 +21,28 @@ opts <- docopt('
   -s Which portion of spp list to run [default: full]
 ')
 
-
-# set options specific to macbook
+# set options specific to my macbook...
 if(any(grep('Darwin', Sys.info()))) {
-  setwd('~/desktop/bbs/')
+  setwd('~/birds-neonics/')
   opts$c <- '2'
 }
-
 
 # load bbs data
 load('data/bbs-use.RData')
 
-
 # set params
 if (opts$y == '2005') years_focal <- 2005:2014
-
 
 # species of interest
 species_df <- read_csv('data/species-list.csv')
 
-
 # read county data
 route_counties <- read_csv('data/route-county-start.csv')
-
 
 # read imidacloprid data
 imidacloprid_counties <- read_csv('data/imidacloprid-county-mean-2005-2012.csv') %>% 
   mutate(imid_cubert = imid_mean^(1/3)) %>% 
   mutate(imid_scale = (imid_cubert - mean(imid_cubert)) / sd(imid_cubert))
-
 
 # which portion of species list to run?
 indices <- 1:nrow(species_df)
@@ -63,7 +53,7 @@ if (opts$s == 'half1') indices <- indices[indices_cuts2 == levels(indices_cuts2)
 if (opts$s == 'half2') indices <- indices[indices_cuts2 == levels(indices_cuts2)[2]]  # second half
 
 
-# for each species...
+## for each species...
 for (i in indices) {
 
   # get aou
