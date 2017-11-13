@@ -7,21 +7,7 @@ Note that some of the files used in our analysis are not included in this reposi
 3. `data/nlcd_2011_landcover_2011_edition_2014_10_10/`
 4. `stanfit/`
 
-File #1 can be downloaded via [Google Drive link](https://drive.google.com/open?id=1y8qVG9-AMW5WUejfpPhxOly3XCjKp012), or generated using the following shell commmands on Mac OS X:
-
-```
-mkdir States
-cd States
-ftp -i ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/Archivefiles/Version2015v1/States/
-mget *.zip
-exit
-unzip "*.zip"
-rm *.zip
-head -1 Alabama.csv > ../bbs-allstates-2015.txt
-tail -n +2 -q *.csv >> ../bbs-allstates-2015.txt
-```
-
-File #2 can be produced using `r/build-epest.R`. Folder #3 can be downloaded [here](https://www.mrlc.gov/nlcd06_data.php). The files within folder #4 are model objects totalling 39 GB, that can be downloaded via [Google Drive link](https://drive.google.com/open?id=1y8qVG9-AMW5WUejfpPhxOly3XCjKp012). (Note our main analyses (`r/model-aggregate.R` and `r/plot.R`) can still be run without the model objects).
+File #1 is available [via Google Drive](https://drive.google.com/open?id=1y8qVG9-AMW5WUejfpPhxOly3XCjKp012), or can be produced as described in `r/build-bbs.R`. File #2 can be produced using `r/build-epest.R`. Folder #3 can be downloaded via [mrlc.gov](https://www.mrlc.gov/nlcd06_data.php). The files within folder #4 are model objects totalling 39 GB, that are available [via Google Drive](https://drive.google.com/open?id=1y8qVG9-AMW5WUejfpPhxOly3XCjKp012). Note that our main analyses (`r/model-aggregate.R` and `r/plot.R`) can still be run without the stanfit model objects.
 
 
 
