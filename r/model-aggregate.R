@@ -337,7 +337,6 @@ length(which(randomization_out2 > crit2)) / length(randomization_out2)   # pre-n
 
 ################# Spatio-temporal analyses (full bayesian model)
 
-
 # examining difference in BCR-specific neonic effects between pre- and post-neonic periods
 FitSpatioTemporal <- function(pre_neonic_period) {
   # organize data
@@ -466,19 +465,19 @@ p1 <- ggplot(df_plot_1) +
   geom_point(aes(y = bcr_short, x = med), col = 'black', shape = 16, size = 2, alpha = 1) +
   geom_errorbarh(aes(y = bcr_short, x = med, xmin = low90, xmax = upp90), height = 0, size = 0.9) +
   geom_errorbarh(aes(y = bcr_short, x = med, xmin = low99, xmax = upp99), height = 0, size = 0.25) +
-  xlab(expression(paste(Delta, Neonicotinoid~effect, ' (', italic(b[k]), ')'))) +
+  xlab(expression(paste(Delta, Neonicotinoid~effect, ' (', italic(b[k]), ') (% ', year^-1, ' ', neonic.^-1, ')'))) +
   ylab(NULL) +
   theme_bw() +
   theme(axis.title = element_text(size = 13),
         text = element_text(size = 13),
         panel.grid = element_blank(),
-        axis.title.x = element_text(margin = margin(.2, 0, 0, 0, unit = 'cm')),
+        axis.title.x = element_text(margin = margin(.2, 0, 0, 0, unit = 'cm'), hjust = 1),
         axis.title.y = element_text(margin = margin(0, .6, 0, 0, unit = 'cm'))) +
   theme(axis.text.x = element_text(size = 10.5, color = 'grey30'),
         axis.text.y = element_text(size = 9.5, color = 'grey30'),
         axis.ticks = element_line(size = 0.2),
         axis.ticks.length = unit(0.2, 'lines'),
-        plot.margin = unit(c(0.5, 0.5, 1.1, 0.5), 'lines'))
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), 'lines'))
 
 # second panel, based on pre-neonic period definition 2
 p2 <- ggplot(df_plot_2) +
@@ -487,19 +486,19 @@ p2 <- ggplot(df_plot_2) +
   geom_errorbarh(aes(y = bcr_short, x = med, xmin = low90, xmax = upp90), height = 0, size = 0.9) +
   geom_errorbarh(aes(y = bcr_short, x = med, xmin = low99, xmax = upp99), height = 0, size = 0.25) +
   scale_x_continuous(breaks = seq(-3, 2, 1)) +
-  xlab(expression(paste(Delta, Neonicotinoid~effect, ' (', italic(b[k]), ')'))) +
+  xlab(expression(paste(Delta, Neonicotinoid~effect, ' (', italic(b[k]), ') (% ', year^-1, ' ', neonic.^-1, ')'))) +
   ylab(NULL) +
   theme_bw() +
   theme(axis.title = element_text(size = 13),
         text = element_text(size = 13),
         panel.grid = element_blank(),
-        axis.title.x = element_text(margin = margin(.2, 0, 0, 0, unit = 'cm')),
+        axis.title.x = element_text(margin = margin(.2, 0, 0, 0, unit = 'cm'), hjust = 1),
         axis.title.y = element_text(margin = margin(0, .6, 0, 0, unit = 'cm'))) +
   theme(axis.text.x = element_text(size = 10.5, color = 'grey30'),
         axis.text.y = element_text(size = 9.5, color = 'grey30'),
         axis.ticks = element_line(size = 0.2),
         axis.ticks.length = unit(0.2, 'lines'),
-        plot.margin = unit(c(0.5, 0.5, 1.1, 0.5), 'lines'))
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), 'lines'))
 
 # arrange full plot
 p_full <- arrangeGrob(p1, p2, nrow = 1)
