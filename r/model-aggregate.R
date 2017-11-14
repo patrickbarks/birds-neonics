@@ -12,23 +12,18 @@ library(loo)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-
 # setwd
 setwd('~/birds-neonics/')
-
 
 # read species and bcr data
 species_df <- read_csv('data/species-list.csv')
 bcr_dat <- read_csv('data/bbs_raw_2015/BCR.csv') %>% mutate(bcr = as.character(BCR))
-
 
 # read posterior summaries from species-level models
 summary_spp_neonic <-          read_csv('analysis/post-summary-spp-spatial-neonic.csv')
 summary_spp_neonic_mismatch <- read_csv('analysis/post-summary-spp-spatial-neonic-mismatch.csv')
 summary_spp_imidacloprid <-    read_csv('analysis/post-summary-spp-spatial-imidacloprid.csv')
 summary_spp_cropland <-        read_csv('analysis/post-summary-spp-spatial-cropland.csv')
-
-
 
 
 
@@ -110,7 +105,6 @@ AggregationModel <- function(data) {
   return(tibble(alpha_df = lst(alpha_df), df_spp = lst(df_spp), df_bcr = lst(df_bcr)))
 }
 
-
 summary_agg_neonic <- summary_spp_neonic %>%
   group_by(year) %>%
   do(AggregationModel(.)) %>%
@@ -131,7 +125,6 @@ summary_agg_cropland <- summary_spp_cropland %>%
   do(AggregationModel(.)) %>%
   ungroup()
 
-
 # write to file
 save(summary_agg_neonic,          file = 'analysis/post-summary-agg-spatial-neonic.RData')
 save(summary_agg_neonic_mismatch, file = 'analysis/post-summary-agg-spatial-neonic-mismatch.RData')
@@ -148,6 +141,15 @@ save(summary_agg_cropland,        file = 'analysis/post-summary-agg-spatial-crop
 summary_spp_trend_7years <- read_csv('analysis/post-summary-spp-temporal-strata-trend-7years.csv')
 summary_spp_trend_allyears <- read_csv('analysis/post-summary-spp-temporal-strata-trend-allyears.csv')
 
+# number of species with increasing and decreasing population trends
+summary_spp_trend_allyears %>% 
+  summarize(n_increase = length(which(beta_med > 0)),
+            n_decrease = length(which(beta_med < 0)))
+
+# number of species with 'significantly' increasing and decreasing population trends (based on 90% CI)
+summary_spp_trend_allyears %>% 
+  summarize(n_sig_increase = length(which(beta_low90 > 0)),
+            n_sig_decrease = length(which(beta_upp90 < 0)))
 
 ### Get aggregate population trend
 AggregateModelTrend <- function(mean, sigma, return_agg = F, return_species = F) {
@@ -203,6 +205,14 @@ summary_agg_trend_7years <- summary_spp_trend_7years %>%
   group_by(year_start) %>%
   do(AggregateModelTrend(mean = .$beta_mean, sigma = .$beta_se,
                          return_agg = F, return_species = F)) %>% ungroup()
+
+# posterior summary for aggregate population trend over the period 1985-2014
+mu_theta_agg <- summary_agg_trend_allyears$df_mu_theta[[1]]$mu_theta
+summary_agg_trend_allyears$mu_theta_med                 # posterior median
+length(which(mu_theta_agg < 0)) / length(mu_theta_agg)  # posterior probability mass < 0
+
+# posterior summary for aggregate population trends in 7-year intervals
+summary_agg_trend_7years %>% as.data.frame()
 
 # write to file
 save(summary_agg_trend_allyears, file = 'analysis/post-summary-agg-temporal-strata-trend-allyears.RData')
@@ -275,6 +285,12 @@ summary_agg_temporal_quadrat <- summary_temporal_quadrat %>%
   group_by(year) %>%
   do(AggregationModel(.)) %>%
   ungroup()
+
+# number of quadrats with increasing and decreasing population trends
+summary_agg_temporal_quadrat %>% 
+  summarize(n_increase = length(which(theta_med > 0)),
+            n_decrease = length(which(theta_med < 0)),
+            n_total = n())
 
 # write to file
 save(summary_agg_temporal_quadrat, file = 'analysis/post-summary-agg-temporal-quadrat.RData')
@@ -425,7 +441,8 @@ compare(loo_null1, loo_test1)
 compare(loo_null2, loo_test2)
 
 
-### plot change in neonic effect between pre- and post-neonic periods, by bcr
+
+### plot change in neonic effect between pre- and post-neonic periods, by bcr (Figure A3)
 # load plotting libraries
 library(ggplot2)
 library(gridExtra)
@@ -510,5 +527,4 @@ grid.arrange(p_full)
 
 # write to file
 ggsave('figures/appendix-delta-neonic-bcr.png', p_full, height = 6.5, width = 9, units = 'in', dpi = 300)
-
 
