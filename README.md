@@ -7,7 +7,7 @@ Note that some of the files used in our analysis are not included in this reposi
 3. `data/nlcd_2011_landcover_2011_edition_2014_10_10/`
 4. `stanfit/`
 
-File #1 is available [via Google Drive](https://drive.google.com/open?id=1y8qVG9-AMW5WUejfpPhxOly3XCjKp012), or can be produced as described in `r/build-bbs.R`. File #2 can be produced using `r/build-epest.R`. Folder #3 can be downloaded via [mrlc.gov](https://www.mrlc.gov/nlcd06_data.php). The files within folder #4 are model objects totalling 39 GB, that are available [via Google Drive](https://drive.google.com/open?id=1y8qVG9-AMW5WUejfpPhxOly3XCjKp012). Note that our main analyses (`r/model-aggregate.R` and `r/plot.R`) can still be run without the stanfit model objects.
+File #1 is available [via Google Drive](https://drive.google.com/open?id=1y8qVG9-AMW5WUejfpPhxOly3XCjKp012), or can be produced as described in `r/build-bbs.R`. File #2 can be produced using `r/build-epest.R`. Folder #3 can be downloaded [here](https://www.mrlc.gov/nlcd06_data.php). The files within folder #4 are model objects totalling 39 GB, that are available [via Google Drive](https://drive.google.com/open?id=1y8qVG9-AMW5WUejfpPhxOly3XCjKp012). Note that our main analyses (`r/model-aggregate.R` and `r/plot.R`) can still be run without the stanfit model objects.
 
 
 
@@ -47,12 +47,12 @@ BBS data from elsewhere:
 
 **cartography.R** Geographic analyses to assign BBS routes to counties (`data/route-county-start.csv`), and estimate the proportion of land area devoted to cultivated crops around each BBS route (`data/landcover-route.csv`). Also creates a grid of quadrats laid overtop the contiguous USA, and assigns BBS routes to quadrats (`data/route-quadrat.csv`). Also produces various shapefiles for plotting.
 
-**build-epest.R** Arrange the various EPest data tables into a single data frame (saved as `data/epest-merge.csv`). Also produces data frames for total neonicotinoid use in each county and year scaled by county area (`data/neonic-county-year.csv`), average annual neonicotinoid use in each county over the period 2005-2012 scaled by county area (`data/neonic-county-mean-2005-2012.csv`), and average annual imidacloprid use in each county over the period 2005-2012 scaled by county area (`data/imidacloprid-county-mean-2005-2012.csv`).
+**build-epest.R** Arrange the various EPest data tables into a single data frame (saved as `data/epest-merge.csv`). Also produce data frames for total neonicotinoid use in each county and year scaled by county area (`data/neonic-county-year.csv`), average annual neonicotinoid use in each county over the period 2005-2012 scaled by county area (`data/neonic-county-mean-2005-2012.csv`), and average annual imidacloprid use in each county over the period 2005-2012 scaled by county area (`data/imidacloprid-county-mean-2005-2012.csv`).
 
-**model-spp-[TYPE].R** Fit species-level models using the [RStan library](http://mc-stan.org/users/interfaces/rstan), and saves resulting stanfit objects to the folder `stanfit/`. These scripts were run on Amazon Web Service EC2 instances (type c4.xlarge). For a given model type and time period, the run-time for the full list of 28 species on a single instance was on the order of 72 hours.
+**model-spp-[TYPE].R** Fit species-level models using the [RStan library](http://mc-stan.org/users/interfaces/rstan), and save resulting stanfit objects to the folder `stanfit/`. These scripts were run on Amazon Web Service EC2 instances (type c4.xlarge). For a given model type and time period, the run-time for the full list of 28 species on a single instance was on the order of 72 hours.
 
 **get-post-summary-[TYPE].R** Extract model diagnostics and posterior samples for parameters of interest, from each of the species-level models (i.e. from the stanfit objects in the folder `stanfit/`). Resulting summaries are saved as `analysis/post-summary-spp-[TYPE].csv`.
 
-**model-aggregate.R** Fit aggregation models (i.e. models to aggregate parameters of interest across species and regions) using RStan, and saves resulting summaries as `analysis/post-summary-agg-[TYPE].RData`.
+**model-aggregate.R** Fit aggregation models (i.e. models to aggregate parameters of interest across species and regions) using RStan, and save resulting summaries as `analysis/post-summary-agg-[TYPE].RData`.
 
 **plot.R** Generate all figures within manuscript.
