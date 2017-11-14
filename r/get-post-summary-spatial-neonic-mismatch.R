@@ -6,10 +6,8 @@ library(docopt)
 library(tidyr)
 library(rstan)
 
-
 # setwd
 setwd('~/birds-neonics/')
-
 
 # species of interest
 species_df <- read_csv('data/species-list.csv')
@@ -18,11 +16,9 @@ species_df <- read_csv('data/species-list.csv')
 # load bbs
 load('data/bbs-use.RData')
 
-
 # read neonic data
 neonics_counties <- read_csv('data/neonic-county-mean-2005-2012.csv') %>% 
   mutate(neonic_cubert = neonic_mean^(1/3)) %>% dplyr::select(-neonic_mean)
-
 
 # merge county and neonic data
 route_counties <- read_csv('data/route-county-start.csv') %>% 
@@ -35,11 +31,9 @@ neonics_counties_merge <- route_counties %>%
   group_by(fips_merge) %>% 
   summarize(neonic_cubert = unique(neonic_cubert))
 
-
 # create list of relevant stanfit files
 path <- 'stanfit/spatial-neonic-mismatch/'
 fit_file <- list.files(path)
-
 
 # extract aou and year from filenames
 ParseString <- function(x, index) { strsplit(x, '-|\\.')[[1]][index] }
@@ -47,7 +41,6 @@ ParseString <- function(x, index) { strsplit(x, '-|\\.')[[1]][index] }
 fit_aou <- sapply(fit_file, ParseString, index = 4, USE.NAMES = F)
 fit_year <- sapply(fit_file, ParseString, index = 5, USE.NAMES = F) %>% 
   substr(1, 4) %>% as.numeric() + 5
-
 
 # arrange file info into dataframe
 fit_df <- data.frame(aou = fit_aou,
@@ -109,11 +102,9 @@ GetPars <- function(path, aou, year, file) {
   return(df)
 }
 
-
 # get posterior summaries
 summary_neonic_mismatch <- group_by(fit_df, aou) %>% 
   do(GetPars(path = .$path, year = .$year, aou = .$aou, file = .$file)) %>% ungroup()
-
 
 # summary
 summary_neonic_mismatch %>%
@@ -125,7 +116,5 @@ summary_neonic_mismatch %>%
             n_strata = unique(n_strata)) %>%
   as.data.frame()
 
-
 # write.csv(summary_neonic_mismatch, 'analysis/post-summary-spp-spatial-neonic-mismatch.csv', row.names = F)
-
 

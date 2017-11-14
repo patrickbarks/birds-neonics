@@ -1,33 +1,26 @@
 
-
 # load libraries
 library(dplyr)
 library(readr)
 library(tidyr)
 library(rstan)
 
-
 # setwd
 setwd('~/birds-neonics/')
-
 
 # species of interest
 species_df <- read_csv('data/species-list.csv')
 
-
 # load bbs
 load('data/bbs-use.RData')
-
 
 # read county data
 route_counties <- read_csv('data/route-county-start.csv') %>%
   dplyr::select(route_uniq, fips)
 
-
 # create list of relevant stanfit files
 path <- 'stanfit/spatial-neonic/'
 fit_file <- list.files(path)
-
 
 # extract aou and year from filenames
 ParseString <- function(x, index) { strsplit(x, '-|\\.')[[1]][index] }
@@ -35,7 +28,6 @@ ParseString <- function(x, index) { strsplit(x, '-|\\.')[[1]][index] }
 fit_aou <- sapply(fit_file, ParseString, index = 5, USE.NAMES = F)
 fit_year <- sapply(fit_file, ParseString, index = 6, USE.NAMES = F) %>% 
   substr(1, 4) %>% as.numeric() + 5
-
 
 # arrange file info into dataframe
 fit_df <- data.frame(aou = fit_aou,
@@ -92,13 +84,11 @@ GetPars <- function(path, aou, year, file) {
   return(df)
 }
 
-
 # get posterior summaries
 summary_neonic <- fit_df %>% 
   group_by(aou, year) %>% 
   do(GetPars(path = .$path, year = .$year, aou = .$aou, file = .$file)) %>%
   ungroup()
-
 
 # diagnostics summary
 summary_neonic %>%
@@ -109,7 +99,5 @@ summary_neonic %>%
             n_counties = unique(n_counties)) %>%
   as.data.frame()
 
-
 # write.csv(summary_neonic, 'analysis/post-summary-spp-spatial-neonic.csv', row.names = F)
-
 

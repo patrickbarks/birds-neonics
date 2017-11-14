@@ -1,5 +1,4 @@
 
-
 # load libraries
 library(dplyr)
 library(readr)
@@ -7,18 +6,14 @@ library(docopt)
 library(tidyr)
 library(rstan)
 
-
 # setwd
 setwd('~/birds-neonics/')
-
 
 # read species of interest
 species_df <- read_csv('data/species-list.csv')
 
-
 # load bbs data
 load('data/bbs-use.RData')
-
 
 # read cropland data
 landcover <- read_csv('data/landcover-route.csv') %>% 
@@ -26,7 +21,6 @@ landcover <- read_csv('data/landcover-route.csv') %>%
   filter(route_uniq %in% bbs_use$route_uniq) %>% 
   mutate(crop_cubert = pct_crop^(1/3)) %>% 
   mutate(crop_scale = (crop_cubert - mean(crop_cubert)) / sd(crop_cubert))
-
 
 # create list of relevant stan files
 path <- 'stanfit/spatial-cropland/'
@@ -95,13 +89,11 @@ GetPars <- function(path, aou, year, file) {
   return(df)
 }
 
-
 # get posterior summaries
 summary_cropland <- fit_df %>% 
   group_by(aou, year) %>% 
   do(GetPars(path = .$path, year = .$year, aou = .$aou, file = .$file)) %>%
   ungroup()
-
 
 # diagnostics summary
 summary_cropland %>%
@@ -112,14 +104,5 @@ summary_cropland %>%
             n_routes = unique(n_routes)) %>%
   as.data.frame()
 
-
 # write.csv(summary_cropland, 'analysis/post-summary-spp-spatial-cropland.csv', row.names = F)
-
-
-
-
-load('stanfit/spatial-cropland/fit-cropland-route-nested4-06050-2005to2014.RData')
-library(shinystan)
-launch_shinystan(fit)
-
 

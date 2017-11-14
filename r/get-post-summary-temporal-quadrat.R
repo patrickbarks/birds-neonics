@@ -1,29 +1,23 @@
 
-
 # load libraries
 library(dplyr)
 library(readr)
 library(tidyr)
 library(rstan)
 
-
 # setwd
 setwd('~/birds-neonics/')
-
 
 # read relevant data
 species_df <- read_csv('data/species-list.csv')
 route_quads <- read_csv('data/route-quadrat.csv')
 
-
 # load bbs data
 load('data/bbs-use.RData')
-
 
 # create list of relevant stan files
 path <- 'stanfit/temporal-quadrat/'
 fit_file <- list.files(path)
-
 
 # extract aou and year from filenames
 ParseString <- function(x, index) { strsplit(x, '-|\\.')[[1]][index] }
@@ -32,14 +26,12 @@ fit_aou <- sapply(fit_file, ParseString, index = 4, USE.NAMES = F)
 fit_year <- sapply(fit_file, ParseString, index = 5, USE.NAMES = F) %>% 
   substr(1, 4) %>% as.numeric() + 5
 
-
 # arrange file info into dataframe
 fit_df <- data.frame(aou = fit_aou,
                      year = fit_year,
                      file = fit_file,
                      path = path,
                      stringsAsFactors = F)
-
 
 # function to extract posterior summaries of interest from rstan objects
 GetPars <- function(path, aou, year, file) {
@@ -81,13 +73,11 @@ GetPars <- function(path, aou, year, file) {
   return(df)
 }
 
-
 # get posterior summaries
 summary_temporal_quadrat <- fit_df %>% 
   group_by(aou, year) %>% 
   do(GetPars(path = .$path, year = .$year, aou = .$aou, file = .$file)) %>%
   ungroup()
-
 
 # diagnostics summary
 summary_temporal_quadrat %>%
@@ -98,14 +88,10 @@ summary_temporal_quadrat %>%
             n_quadrats = unique(n_quadrats)) %>%
   as.data.frame()
 
-
 # write.csv(summary_temporal_quadrat, 'analysis/post-summary-spp-temporal-quadrat.csv', row.names = F)
-
 
 
 # ### diagnostics
 # library(shinystan)
 # load('stanfit/temporal-quadrat/fit-temporal-quadrat-07660-2005to2014.RData')
 # launch_shinystan(fit)
-
-

@@ -7,22 +7,25 @@ library(readr)
 # setwd
 setwd('~/birds-neonics/')
 
-# bbs_allstates-2015.txt can be obtained with the following shell commands on Mac OSX:
-# cd data/bbs_raw_2015/States/
-# ftp -i ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/Archivefiles/Version2015v1/States/
-# mget *.zip
-# exit
-# unzip "*.zip"
-# rm *.zip
-# head -1 Alabama.csv > ../../bbs-allstates-2015.txt
-# tail -n +2 -q *.csv >> ../../bbs-allstates-2015.txt
-
 # read data
 dt <- read_csv('data/bbs-allstates-2015.txt')        # BBS bird counts
 wx <- read.csv('data/bbs_raw_2015/weather.csv')      # BBS weather info
 rt <- read_csv('data/bbs_raw_2015/routes.csv')       # BBS route info
 rg <- read_csv('data/bbs_raw_2015/RegionCodes.csv')  # BBS region info
 species <- read_csv('data/species-list.csv')         # Barks and Galpern species list
+
+# Note that bbs_allstates-2015.txt is a concatenation of state-specific BBS tables found
+# within the folder 'States/'. It can by produced manually, or by using the following
+# shell commands on Mac OS X:
+# mkdir States
+# cd States
+# ftp -i ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/Archivefiles/Version2015v1/States/
+# mget *.zip
+# exit
+# unzip "*.zip"
+# rm *.zip
+# head -1 Alabama.csv > ../bbs-allstates-2015.txt
+# tail -n +2 -q *.csv >> ../bbs-allstates-2015.txt
 
 # remove extraneous columns
 dt <- select(dt, -matches('count[[:digit:]]+'), -StopTotal, count = SpeciesTotal)

@@ -1,5 +1,4 @@
 
-
 # load libraries
 library(dplyr)
 library(readr)
@@ -7,14 +6,11 @@ library(tidyr)
 library(tibble)
 library(rstan)
 
-
 # setwd
 setwd('~/birds-neonics/')
 
-
 # read species of interest
 species_df <- read_csv('data/species-list.csv')
-
 
 # create df of relevant stanfit files
 path <- 'stanfit/temporal-strata/'
@@ -22,7 +18,6 @@ fits <- list.files(path)
 
 fit_aous <- sapply(fits, function (x) strsplit(x, '-|\\.')[[1]][4], USE.NAMES = F)
 fit_df <- tibble(aou = fit_aous, file = fits, path = path)
-
 
 
 
@@ -39,8 +34,8 @@ GetAbundance85to14 <- function(path, aou, file) {
   
   df <- data.frame(year = 1985:2014,
                    comp_med = apply(CompIndex, 2, function(x) quantile(x, 0.500)),
-                   comp_low = apply(CompIndex, 2, function(x) quantile(x, 0.025)),
-                   comp_upp = apply(CompIndex, 2, function(x) quantile(x, 0.975)),
+                   comp_low90 = apply(CompIndex, 2, function(x) quantile(x, 0.05)),
+                   comp_upp90 = apply(CompIndex, 2, function(x) quantile(x, 0.95)),
                    n_diverg = n_diverg, rhat_high = rhat_high)
   
   return(df)
@@ -58,7 +53,7 @@ summary_abundance_85_14 %>%
             rhat_high = unique(rhat_high)) %>% 
   as.data.frame()
 
-# # write to file
+# write to file
 # write.csv(summary_abundance_85_14, 'analysis/post-summary-spp-temporal-strata-abundance.csv', row.names = F)
 
 
@@ -122,8 +117,7 @@ summary_trend_7years <- group_by(fit_df, aou) %>%
   do(GetTrendsHelper(path = .$path, aou = .$aou, file = .$file, year_indices_l = years_list_7)) %>%
   ungroup()
 
-# # write to file
+# write to file
 # write.csv(summary_trend_allyears, 'analysis/post-summary-spp-temporal-strata-trend-allyears.csv', row.names = F)
 # write.csv(summary_trend_7years, 'analysis/post-summary-spp-temporal-strata-trend-7years.csv', row.names = F)
-
 

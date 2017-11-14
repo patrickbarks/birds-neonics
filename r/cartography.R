@@ -68,7 +68,7 @@ rt_sp@data$fips <- over(rt_sp, counties_shp)$fips
 # table of number of counties containing X routes (note majority of counties have zero bbs routes)
 table(table(rt_sp@data$fips))
 
-# find routes not within any county boundaries
+# find routes not within any county boundaries (N = 4)
 routes_outside <- rt_sp@data$route_uniq[which(is.na(rt_sp@data$fips))]
 
 # Function to find county nearest to route
@@ -82,7 +82,7 @@ FindCounty <- function(focal_rt, routes, counties) {
   return(counties@data$fips[which.min(pDist)])
 }
 
-# find counties nearest to the routes that are not within any county polygons
+# find counties nearest to the 4 routes that are not within any county polygons
 fips_outside <- sapply(routes_outside, FindCounty, routes = rt_sp, counties = counties_shp)
 route_fips_outside <- tibble(route_uniq = routes_outside, fips_outside = fips_outside)
 
