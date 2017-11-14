@@ -1,5 +1,4 @@
 
-
 # load libraries
 library(dplyr)
 library(readr)
@@ -11,10 +10,8 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 
-
 # setwd
 setwd('~/birds-neonics/')
-
 
 # read species list and epest data
 species_df <- read_csv('data/species-list.csv')
@@ -23,7 +20,7 @@ epest <- read_csv('data/epest-merge.csv')
 
 
 ######### Figure 1
-# species abundance over time
+# population abundance over the period 1985-2014, by species
 
 # organize data
 summary_trend_allyrs <- read_csv('analysis/post-summary-spp-temporal-strata-trend-allyears.csv')
@@ -44,10 +41,10 @@ df_plot_abundance <- summary_abundance_85_14 %>%
   left_join(beta_summary_85_14, by = 'aou') %>% 
   mutate(species_short = reorder(factor(species_short), aou, min))
 
-# create dummy data to add extra space at top of plots
+# create dummy data to add extra space at top of individual panels
 dummy_plot <- df_plot_abundance %>% group_by(aou) %>% 
-  summarize(plot_min = min(comp_low),
-            plot_max = max(comp_upp),
+  summarize(plot_min = min(comp_low90),
+            plot_max = max(comp_upp90),
             log_min = log(plot_min),
             log_max = log(plot_max),
             log_buffer = (log_max - log_min) * 0.27,
@@ -85,9 +82,9 @@ LabelFn <- function(breaks) {
   }
 }
 
-# create plot
+# create full plot
 fig_1 <- ggplot(df_plot_abundance) +
-  geom_ribbon(aes(x = year, ymin = comp_low, ymax = comp_upp), fill = 'blue', alpha = 0.3) +
+  geom_ribbon(aes(x = year, ymin = comp_low90, ymax = comp_upp90), fill = 'blue', alpha = 0.3) +
   geom_line(aes(x = year, y = comp_med), size = 0.4, alpha = 0.9, col = 'grey30') +
   geom_blank(data = dummy_plot, aes(x, new_max)) +
   scale_y_log10(breaks = BreakFn, labels = LabelFn) +
@@ -710,12 +707,12 @@ quartz(height = 7, width = 7)
 grid.arrange(plot_cropland_untrans)
 
 # write plots to file
-ggsave('figures/fig-s3.png', plot_neonic, height = 7, width = 7, units = 'in', dpi = 300)
-ggsave('figures/fig-s4.png', plot_imidacloprid, height = 7, width = 7, units = 'in', dpi = 300)
-ggsave('figures/fig-s8.png', plot_cropland, height = 7, width = 7, units = 'in', dpi = 300)
-ggsave('figures/appendix-spatial-neonic-mismatch.png', plot_neonic_mismatch, height = 7, width = 7, units = 'in', dpi = 300)
-ggsave('figures/appendix-untransformed-neonic.png', plot_neonic_untrans, height = 7, width = 7, units = 'in', dpi = 300)
-ggsave('figures/appendix-untransformed-cropland.png', plot_cropland_untrans, height = 7, width = 7, units = 'in', dpi = 300)
+ggsave('figures/fig-s3.png', plot_neonic, height = 7, width = 7, units = 'in', dpi = 300)         # Fig S3
+ggsave('figures/fig-s4.png', plot_imidacloprid, height = 7, width = 7, units = 'in', dpi = 300)   # Fig S4
+ggsave('figures/fig-s8.png', plot_cropland, height = 7, width = 7, units = 'in', dpi = 300)       # Fig S8
+ggsave('figures/appendix-spatial-neonic-mismatch.png', plot_neonic_mismatch, height = 7, width = 7, units = 'in', dpi = 300) # Fig A4
+ggsave('figures/appendix-untransformed-neonic.png', plot_neonic_untrans, height = 7, width = 7, units = 'in', dpi = 300)     # Fig A1
+ggsave('figures/appendix-untransformed-cropland.png', plot_cropland_untrans, height = 7, width = 7, units = 'in', dpi = 300) # Fig A2
 
 
 
@@ -916,7 +913,7 @@ ggsave('figures/fig-s9.png', fig_s9, height = 4.5, width = 5.5, units = 'in')
 
 
 
-################### Fig A5
+################### Figure A5
 # correlation between posterior median neonic effects estimated in main analysis
 # versus effects estimated using spatial mismatch model
 
